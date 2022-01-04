@@ -9,12 +9,12 @@ syn match assSourceComment "^;.*$"
 syn match assLine          "^[^;][^:]*:.*$"  contains=assHeader,assComment,assDialog
 syn match assHeader        "^[^;][^:]*:\s*"  contained nextgroup=assHeaderText
 syn match assHeaderText    ".*$"             contained
-syn match assComment       "^Comment:\s*"    contained nextgroup=assCommentText
+syn match assComment       "^Comment:\s*"    contained nextgroup=assCommentText conceal cchar=#
 syn match assCommentText   ".*$"             contained
-syn match assDialog        "^Dialogue:\s*"   contained nextgroup=assDialogTimes
-syn match assDialogTimes   "\([^,]*,\)\{4}"  contained nextgroup=assDialogActor
+syn match assDialog        "^Dialogue:\s*"   contained nextgroup=assDialogTimes conceal cchar=E
+syn match assDialogTimes   "\([^,]*,\)\{4}"  contained nextgroup=assDialogActor conceal cchar=:
 syn match assDialogActor   "[^,]*"           contained nextgroup=assDialogEffects
-syn match assDialogEffects ",\([^,]*,\)\{4}" contained nextgroup=assDialogText
+syn match assDialogEffects ",\([^,]*,\)\{4}" contained nextgroup=assDialogText conceal cchar= 
 syn match assDialogText    ".*$"             contained contains=assTextComment,assTextSubCode,assSpecialChar
 syn match assTextComment   "{[^}]*}"         contained
 syn match assTextSubCode   "{\\[^}]*}"       contained
