@@ -32,16 +32,8 @@ function ass.setup(opts)
         ]]
     end
 
-    if opts.remap_keys then
+    if opts.mappings then
         vim.cmd[[
-            autocmd FileType ass nnoremap-local <BS> <Cmd>AssReplace<CR>
-            autocmd FileType ass nnoremap-local <expr> <CR> '<Cmd>AssReplaceMove' . v:count1 . '<CR>'
-            autocmd FileType ass nnoremap-local <expr> <Tab> '<Cmd>AssAppend' . v:count1 . '<CR>'
-            autocmd FileType ass nnoremap-local <expr> <M-k> '<Cmd>AssSplitUp' . v:count1 . '<CR>'
-            autocmd FileType ass nnoremap-local <expr> <M-j> '<Cmd>AssSplitDown' . v:count1 . '<CR>'
-            autocmd FileType ass nnoremap-local <expr> <C-k> 'k<Cmd>AssSplitDown' . v:count1 . '<CR>'
-            autocmd FileType ass nnoremap-local <expr> <C-j> 'j<Cmd>AssSplitUp' . v:count1 . '<CR>'
-            autocmd FileType ass nnoremap-local <expr> J '<Cmd>AssJoin' . v:count1 . '<CR>'
             autocmd FileType ass nnoremap-local <leader>av <Cmd>AssShow<CR>
             autocmd FileType ass nnoremap-local <leader>as <Cmd>AssPlay line<CR>
             autocmd FileType ass nnoremap-local <leader>at <Cmd>AssPlay all<CR>
@@ -49,6 +41,19 @@ function ass.setup(opts)
             autocmd FileType ass nnoremap-local <leader>ad <Cmd>AssPlayBG end<CR>
             autocmd FileType ass nnoremap-local <leader>aq <Cmd>AssPlayBG before<CR>
             autocmd FileType ass nnoremap-local <leader>aw <Cmd>AssPlayBG after<CR>
+            autocmd FileType ass nnoremap-local <BS> <Cmd>AssReplace<CR>
+            autocmd FileType ass nnoremap-local <expr> <CR> '<Cmd>AssReplaceMove' . v:count1 . '<CR>'
+            autocmd FileType ass nnoremap-local <expr> <Tab> '<Cmd>AssAppend' . v:count1 . '<CR>'
+            autocmd FileType ass nnoremap-local <expr> <M-k> '<Cmd>AssSplitUp' . v:count1 . '<CR>'
+            autocmd FileType ass nnoremap-local <expr> <M-j> '<Cmd>AssSplitDown' . v:count1 . '<CR>'
+            autocmd FileType ass nnoremap-local <expr> <C-k> 'k<Cmd>AssSplitDown' . v:count1 . '<CR>'
+            autocmd FileType ass nnoremap-local <expr> <C-j> 'j<Cmd>AssSplitUp' . v:count1 . '<CR>'
+        ]]
+    end
+
+    if opts.remap then
+        vim.cmd[[
+            autocmd FileType ass nnoremap-local <expr> J '<Cmd>AssJoin' . v:count1 . '<CR>'
             autocmd FileType ass vnoremap-local J :AssJoinRange<CR>
             autocmd FileType ass nnoremap-local _ 09f,l
         ]]
