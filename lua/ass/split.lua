@@ -12,6 +12,7 @@ local util = require'ass.util'
 -- @field window
 -- @field parent_window
 -- @field last_cursor_pos
+-- @field in_operation
 local SplitWin = {}
 
 function split._ensure_exists()
@@ -58,11 +59,7 @@ end
 
 function split.replace_move(count)
     split._ensure_exists()
-    for i = 1, count do
-        split.get_current_split():process_line("replace_line")
-        split.cursor_down(1)
-        util.move_cursor(vim.api.nvim_get_current_win(), 1)
-    end
+    split.get_current_split():replace_move(count)
 end
 
 function split.append(count)
@@ -114,12 +111,16 @@ function SplitWin:open_ass(filename)
     vim.opt.cursorline=true
     self:focus_parent()
 
+    self:reset_cursor()
+end
+
+function SplitWin:reset_cursor()
     self.last_cursor_pos = vim.api.nvim_win_get_cursor(self.parent_window)
 end
 
 function SplitWin:follow_cursor()
     if not (self.is_open and vim.api.nvim_get_current_win() == self.parent_window) then return end
-    if not self.last_cursor_pos then return end
+    if not self.last_cursor_pos or self.in_operation then return end
 
     local pc = vim.api.nvim_win_get_cursor(self.parent_window)
     if pc[1] ~= self.last_cursor_pos[1] then
@@ -135,6 +136,18 @@ function SplitWin:move_cursor(dy)
     util.move_cursor(self.window, dy)
 end
 
+function SplitWin:replace_move(count)
+    -- just disable the follow so there's no funny business with the hooks
+    self.in_operation = true
+    for i = 1, count do
+        split.get_current_split():process_line("replace_line")
+        util.move_cursor(vim.api.nvim_get_current_win(), 1)
+        self:move_cursor(1)
+    end
+    self:reset_cursor()
+    self.in_operation = false
+end
+
 function SplitWin:process_line(pyfun)
     if not (self.is_open and vim.api.nvim_get_current_win() == self.parent_window) then return end
 
@@ -142,7 +155,7 @@ function SplitWin:process_line(pyfun)
     local liner = util.escape_py(util.get_current_line(self.window))
 
     local res = vim.fn.py3eval(string.format('ass.%s("%s", "%s")', pyfun, linel, liner))
-    if res ~= nil then
+    if res ~= nil and res ~= vim.NIL then
         util.set_current_line(self.pwindow, res)
     end
 end

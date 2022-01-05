@@ -1,7 +1,6 @@
 from datetime import timedelta
 import re
 import subprocess
-import tempfile
 import vim
 
 D_LAYER = 0
@@ -15,14 +14,16 @@ D_MARGINV = 7
 D_EFFECT = 8
 D_TEXT = 9
 
-split_re = re.compile("[\\.:]")
+time_re = re.compile("^([0-9]):([0-9]{2}):([0-9]{2})[.:]([0-9]{2})$")
+
+START_LENGTH = 50
 
 def parse_time(t):
-    assert(t[i] == ":" for i in [1, 4])
-    assert(t[7] in ".:")
-    assert(len(t) == 10)
-    fields = [int(f) for f in split_re.split(t)]
-    assert(len(fields) == 4)
+    m = time_re.match(t)
+    if not m:
+        return None
+
+    fields = [int(i) for i in m.groups()]
 
     return timedelta(
             hours=fields[0],
@@ -86,24 +87,76 @@ def escape_cmd(s):
     return s.replace("'", "'\"'\"'")
 
 
-def show(line, sname):
+def get_video():
     vidlines = [l for l in vim.current.buffer if l.startswith("Video File: ")]
     if not vidlines:
-        print("No video file listed!")
-        return
+        return None
+    return vidlines[0].removeprefix("Video File: ")
 
-    vidfile = vidlines[0].removeprefix("Video File: ")
+
+def get_play_cmd(line, opt, background):
+    vidfile = get_video()
+    if not vidfile:
+        print("No video file")
+        return
 
     l = parse_dialogue(line)
     if not l:
-        return
+        print("Invalid line")
+        return None
 
     t1 = parse_time(l[D_START])
     t2 = parse_time(l[D_END])
 
-    t = format_td((t1 + t2) / 2)
+    if not (t1 and t2):
+        print("Invalid line")
+        return None
 
-    subprocess.Popen(["bash", "-c",
-        "f=$(mktemp --suffix .bmp) && ffmpeg -ss {} -copyts -i '{}' -vf subtitles='{}' -vframes 1 $f -y && feh $f && rm $f"
-        .format(t, vidfile, sname)])
+    start = None
+    end = None
+
+    if opt == "line":
+        start, end = t1, t2
+    elif opt == "all":
+        start, end = t1, None
+    elif opt == "begin":
+        start, end = t1, t1 + timedelta(microseconds=10000 * START_LENGTH)
+    elif opt == "end":
+        start, end = t2 - timedelta(microseconds=10000 * START_LENGTH), t2
+    elif opt == "before":
+        start, end = t1 - timedelta(microseconds=10000 * START_LENGTH), t1
+    elif opt == "after":
+        start, end = t1, t1 + timedelta(microseconds=10000 * START_LENGTH)
+
+    cmd = ["mpv",  vidfile, "--no-video"]
+
+    if start:
+        cmd.append("--start=" + format_td(start))
+    if end:
+        cmd.append("--end=" + format_td(end))
+
+    if background:
+        subprocess.Popen(cmd)
+    else:
+        cmd[1] = "'{}'".format(escape_cmd(cmd[1]))
+        return " ".join(cmd)
+
+
+def get_show_cmd(line):
+    vidfile = get_video()
+    if not vidfile:
+        print("No video file")
+        return
+
+    cmd = "mpv '{}' --sub-file=- --pause".format(escape_cmd(vidfile))
+
+    l = parse_dialogue(line)
+    if l:
+        try:
+            t = format_td(parse_time(l[D_START]))
+            cmd += f" --start={t}"
+        except (ValueError, AssertionError):
+            pass
+
+    return cmd
 
