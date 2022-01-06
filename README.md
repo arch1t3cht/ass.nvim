@@ -44,7 +44,7 @@ if `mappings = true` is set in the configurations, then keymaps will be created 
 |`<leader>aw`|`:AssPlayBG after`| Play the audio just after the current line |
 |`<leader>ax`|`:AssLineSplit`| Split the current line at the cursor, and replace the following line with the second half |
 |`<CR>`|`:AssReplaceMove`| When split editing, replace the left line by the right line and move both cursors |
-|`<BS>`|`:AssReplace :AssSplitDown`| When split editing, replace the left line by the right line and only advance the right cursor |
+|`<BS>`|`:AssReplace:AssSplitDown`| When split editing, replace the left line by the right line and only advance the right cursor |
 |`<Tab>`|`:AssAppend`| When split editing, append the left line to the right line and only advance the right cursor |
 |`<M-k>`|`:AssSplitUp`| When split editing, move the right cursor up |
 |`<M-j>`|`:AssSplitDown`| When split editing, move the right cursor down |
