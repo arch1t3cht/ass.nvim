@@ -103,7 +103,7 @@ function ass.split_line()
     local lines = vim.api.nvim_buf_get_lines(buf, c[1] - 1, c[1] + 1, false)
     if #lines < 2 then return end
 
-    local res = util.pyeval(string.format('ass.split_line("%s", "%s", %d)', util.escape_py(lines[1]), util.escape_py(lines[2]), c[2]))
+    local res = util.pyeval(string.format('ass.split_line("%s", "%s", %d)', util.escape_py(lines[1]), util.escape_py(lines[2]), c[2] - 1))
     if res ~= nil and res ~= vim.NIL then
         vim.api.nvim_buf_set_lines(buf, c[1] - 1, c[1] + 1, false, res)
     end
