@@ -60,6 +60,17 @@ function ass.setup(opts)
             autocmd FileType ass nnoremap <buffer> _ 09f,l
         ]]
     end
+
+    if opts.mpv_args_audio == nil then
+        opts.mpv_args_audio = {"--no-video", "--no-config", "--really-quiet"}
+    end
+
+    if opts.mpv_args_video == nil then
+        opts.mpv_args_video = {"--pause"}
+    end
+
+    vim.cmd(string.format("py3 ass.mpv_args_video = %s", util.python_list(opts.mpv_args_video)))
+    vim.cmd(string.format("py3 ass.mpv_args_audio = %s", util.python_list(opts.mpv_args_audio)))
 end
 
 function ass.show()
@@ -103,12 +114,7 @@ function ass.join(from, to)
     local buf = vim.api.nvim_get_current_buf()
     local lines = vim.api.nvim_buf_get_lines(buf, from, to + 1, false)
 
-    local pythonlist = ""
-    for _, k in ipairs(lines) do
-        pythonlist = pythonlist .. string.format('"%s",', util.escape_py(k))
-    end
-
-    local res = vim.fn.py3eval(string.format('ass.join_lines([%s])', pythonlist))
+    local res = vim.fn.py3eval(string.format('ass.join_lines(%s)', util.python_list(lines)))
     if res ~= nil and res ~= vim.NIL then
         vim.api.nvim_buf_set_lines(buf, from, to + 1, false, {res})
     end

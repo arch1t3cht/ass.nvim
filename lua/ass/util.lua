@@ -6,6 +6,14 @@ function util.escape_py(str)
         :gsub('"', '\\"')
 end
 
+function util.python_list(list)
+    local entries = ""
+    for _, k in ipairs(list) do
+        entries = entries .. string.format('"%s",', util.escape_py(k))
+    end
+    return string.format("[%s]", entries)
+end
+
 function util.get_current_line(win)
     local buf = vim.api.nvim_win_get_buf(win)
     local c = vim.api.nvim_win_get_cursor(win)

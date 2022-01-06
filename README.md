@@ -20,6 +20,19 @@ require'ass'.setup({
     remap = true,
 })
 ```
+The following is the full list of all configuration options, together with their default values:
+```lua
+{
+    conceal = false,      -- whether to automatically enable conceal for .ass files
+    mappings = false,     -- whether to create keybindings for the defined commands
+    remap = false,        -- whether to remap existing keybindings
+    mpv_options_video     -- options passed to mpv when previewing video
+      = {"--pause"},
+    mpv_options_audio     -- options passed to mpv when playing audio
+      = {"--no-video", "--no-config", "--really-quiet"},
+}
+```
+
 More precise and flexible configuration options for mapping commands might be added in the future.
 
 ### Conceal

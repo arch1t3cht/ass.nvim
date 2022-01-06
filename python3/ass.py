@@ -18,6 +18,9 @@ time_re = re.compile("^([0-9]):([0-9]{2}):([0-9]{2})[.:]([0-9]{2})$")
 
 START_LENGTH = 50
 
+mpv_args_video = []
+mpv_args_audio = []
+
 def parse_time(t):
     m = time_re.match(t)
     if not m:
@@ -111,9 +114,9 @@ def get_av(name):
 
 
 def get_play_cmd(line, opt, background):
-    vidfile = get_av("Audio")
-    if not vidfile:
-        print("No video file")
+    afile = get_av("Audio")
+    if not afile:
+        print("No audio file")
         return
 
     l = parse_dialogue(line)
@@ -144,7 +147,7 @@ def get_play_cmd(line, opt, background):
     elif opt == "after":
         start, end = t2, t2 + timedelta(microseconds=10000 * START_LENGTH)
 
-    cmd = ["mpv",  vidfile, "--no-video", "--no-config", "--really-quiet"]
+    cmd = ["mpv",  afile] + mpv_args_audio
 
     if start:
         cmd.append("--start=" + format_td(start))
@@ -164,15 +167,14 @@ def get_show_cmd(line):
         print("No video file")
         return
 
-    cmd = "mpv '{}' --sub-file=- --pause".format(escape_cmd(vidfile))
+    cmd = "mpv '{}' --sub-file=-".format(escape_cmd(vidfile)) + "".join(
+            " " + a for a in mpv_args_video)
 
     l = parse_dialogue(line)
     if l:
-        try:
-            t = format_td(parse_time(l[D_START]))
+        t = format_td(parse_time(l[D_START]))
+        if t:
             cmd += f" --start={t}"
-        except (ValueError, AssertionError):
-            pass
 
     return cmd
 
