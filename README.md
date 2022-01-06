@@ -86,7 +86,9 @@ While the right buffer is also writeable, the intended use of split subtitle edi
 
 ### Keybinds
 
-Following this convention, the current line in the right window will be highlighted, and the (vertical) cursor position in the right window will follow any (vertical) moves made by the cursor in the left window (but one can move the cursor in the right window freely when switching to the window). When `mappings = true` is set in the configuration, the keybinds `<C-j>`, `<C-k>` and `<M-j>`, `<M-k>` move only the cursor in the left, resp. right window. Furthermore, the following keybinds can be used for copying lines from the left to the right:
+Following this convention, the current line in the right window will be highlighted, and the (vertical) cursor position in the right window will follow any (vertical) moves made by the cursor in the left window (but one can move the cursor in the right window freely when switching to the window). When `mappings = true` is set in the configuration, the keybinds `<C-j>`, `<C-k>` and `<M-j>`, `<M-k>` move only the cursor in the left, resp. right window. Similarly, `<M-e>`, `<M-y>` as well as `<M-d>`, `<M-i>` scroll the right buffer analogously to `<C-e>`, `<C-y>`, `<C-d>`, and `<C-u>`. [`<M-i>` has been used instead of `<M-u>` because the latter does not work for some unknown reason]
+
+Furthermore, the following keybinds can be used for copying lines from the left to the right:
 - `<CR>` replaces the text of the left line with that of the right line, and advances both cursors by one line. Can be used with a count.
 - `<Tab>` appends the text of the right line to the left line, and advances the right cursor by one line. Can be used with a count.
 - `<BS>` replaces the text of the left line with that of the right line, and advances only the right cursor by one line.
@@ -105,3 +107,6 @@ The following commands are defined for editing subtitles in split windows
 |`:AssSplitDown`| Move the right cursor down by the given amount of lines (default=1) |
 
 The split window can be closed normally with `:q`.
+
+## Acknowledgements
+The syntax file is taken from [joeky888's Repository](https://github.com/joeky888/Ass.vim). Thanks to [PhosCity](https://github.com/PhosCity) for testing and other suggestions.

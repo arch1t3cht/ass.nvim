@@ -50,6 +50,10 @@ function ass.setup(opts)
             autocmd FileType ass nnoremap <buffer> <expr> <M-j> '<Cmd>AssSplitDown' . v:count1 . '<CR>'
             autocmd FileType ass nnoremap <buffer> <expr> <C-k> 'k<Cmd>AssSplitDown' . v:count1 . '<CR>'
             autocmd FileType ass nnoremap <buffer> <expr> <C-j> 'j<Cmd>AssSplitUp' . v:count1 . '<CR>'
+            autocmd FileType ass nnoremap <buffer> <expr> <M-e> '<C-w>l' . v:count1 . '<C-e><C-w>h'
+            autocmd FileType ass nnoremap <buffer> <expr> <M-y> '<C-w>l' . v:count1 . '<C-y><C-w>h'
+            autocmd FileType ass nnoremap <buffer> <M-d> <C-w>l<C-d><C-w>h
+            autocmd FileType ass nnoremap <buffer> <M-i> <C-w>l<C-u><C-w>h
         ]]
     end
 
