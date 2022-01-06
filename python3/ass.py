@@ -87,15 +87,15 @@ def escape_cmd(s):
     return s.replace("'", "'\"'\"'")
 
 
-def get_video():
-    vidlines = [l for l in vim.current.buffer if l.startswith("Video File: ")]
+def get_av(name):
+    vidlines = [l for l in vim.current.buffer if l.startswith(f"{name} File: ")]
     if not vidlines:
         return None
-    return vidlines[0].removeprefix("Video File: ")
+    return vidlines[0].removeprefix(f"{name} File: ")
 
 
 def get_play_cmd(line, opt, background):
-    vidfile = get_video()
+    vidfile = get_av("Audio")
     if not vidfile:
         print("No video file")
         return
@@ -143,7 +143,7 @@ def get_play_cmd(line, opt, background):
 
 
 def get_show_cmd(line):
-    vidfile = get_video()
+    vidfile = get_av("Video")
     if not vidfile:
         print("No video file")
         return
