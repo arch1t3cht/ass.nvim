@@ -19,6 +19,7 @@ function ass.setup(opts)
         command -count=1 AssAppend lua require'ass.split'.append(<count>)
         command -count=1 AssSplitUp lua require'ass.split'.cursor_up(<count>)
         command -count=1 AssSplitDown lua require'ass.split'.cursor_down(<count>)
+        command -count=1 AssLineSplit lua require'ass'.split_line()
         command -count=1 AssJoin lua require'ass'.join_cursor(<count>)
         command -range=1 AssJoinRange lua require'ass'.join(<line1> - 1, <line2> - 1)
         command -range=1 AssShow lua require'ass'.show()
@@ -41,6 +42,7 @@ function ass.setup(opts)
             autocmd FileType ass nnoremap <buffer> <leader>ad <Cmd>AssPlayBG end<CR>
             autocmd FileType ass nnoremap <buffer> <leader>aq <Cmd>AssPlayBG before<CR>
             autocmd FileType ass nnoremap <buffer> <leader>aw <Cmd>AssPlayBG after<CR>
+            autocmd FileType ass nnoremap <buffer> <leader>ax <Cmd>AssLineSplit<CR>
             autocmd FileType ass nnoremap <buffer> <BS> <Cmd>AssReplace<CR><Cmd>AssSplitDown<CR>
             autocmd FileType ass nnoremap <buffer> <expr> <CR> '<Cmd>AssReplaceMove' . v:count1 . '<CR>'
             autocmd FileType ass nnoremap <buffer> <expr> <Tab> '<Cmd>AssAppend' . v:count1 . '<CR>'
@@ -60,12 +62,6 @@ function ass.setup(opts)
     end
 end
 
-function ass.join_cursor(count)
-    local win = vim.api.nvim_get_current_win()
-    local c = vim.api.nvim_win_get_cursor(win)
-    ass.join(c[1] - 1, c[1] + count - 1)
-end
-
 function ass.show()
     local line = util.escape_py(util.get_current_line(vim.api.nvim_get_current_win()))
     local res = vim.fn.py3eval(string.format('ass.get_show_cmd("%s")', line))
@@ -81,6 +77,26 @@ function ass.play_line(opt, background)
         vim.cmd("!" .. res)
         vim.fn.feedkeys("<CR>")     -- close the "Enter" prompt
     end
+end
+
+function ass.split_line()
+    local win = vim.api.nvim_get_current_win()
+    local c = vim.api.nvim_win_get_cursor(win)
+    local buf = vim.api.nvim_get_current_buf()
+
+    local lines = vim.api.nvim_buf_get_lines(buf, c[1] - 1, c[1] + 1, false)
+    if #lines < 2 then return end
+
+    local res = vim.fn.py3eval(string.format('ass.split_line("%s", "%s", %d)', util.escape_py(lines[1]), util.escape_py(lines[2]), c[2]))
+    if res ~= nil and res ~= vim.NIL then
+        vim.api.nvim_buf_set_lines(buf, c[1] - 1, c[1] + 1, false, res)
+    end
+end
+
+function ass.join_cursor(count)
+    local win = vim.api.nvim_get_current_win()
+    local c = vim.api.nvim_win_get_cursor(win)
+    ass.join(c[1] - 1, c[1] + count - 1)
 end
 
 function ass.join(from, to)

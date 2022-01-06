@@ -42,6 +42,7 @@ if `mappings = true` is set in the configurations, then keymaps will be created 
 |`<leader>ad`|`:AssPlayBG end`| Play the end of the current line |
 |`<leader>aq`|`:AssPlayBG before`| Play the audio just before the current line |
 |`<leader>aw`|`:AssPlayBG after`| Play the audio just after the current line |
+|`<leader>ax`|`:AssLineSplit`| Split the current line at the cursor, and replace the following line with the second half |
 |`<CR>`|`:AssReplaceMove`| When split editing, replace the left line by the right line and move both cursors |
 |`<BS>`|`:AssReplace :AssSplitDown`| When split editing, replace the left line by the right line and only advance the right cursor |
 |`<Tab>`|`:AssAppend`| When split editing, append the left line to the right line and only advance the right cursor |
@@ -55,6 +56,8 @@ After `<leader>a`, the keybinds for playing audio match the analogous keybinds f
 ## Commands
 ### Editing lines
 The commands `:AssJoin` and `:AssJoinRange` accept a count and a range respectively, and join the described set of subtitle lines into one. They are the backend to the modified `J` command defined above - respectively in normal and in visual mode.
+
+The command `:AssLineSplit` splits the current line at the cursor position, replacing the current line with the left half and the following line with the right half. This is useful when during split editing, two consecutive lines on the left are translated to a single joined line on the right.
 
 ### Showing or playing lines
 For these commands to work, `mpv` needs to be installed, and an "Audio File" or resp. "Video File" needs to be given in the subtitle file (i.e. as saved by Aegisub in `[Aegisub Project Garbage]`).

@@ -71,6 +71,22 @@ def append_line(l1, l2):
     return assemble_dialogue(p1)
 
 
+def split_line(l1, l2, x):
+    p1 = parse_dialogue(l1)
+    p2 = parse_dialogue(l2)
+    if not p1 or not p2:
+        return None
+
+    linex = x - len(",".join(p1[:D_TEXT]))
+    t = p1[D_TEXT]
+    t1, t2 = t[:linex], t[linex:]
+
+    p1[D_TEXT] = t1.strip()
+    p2[D_TEXT] = t2.strip()
+
+    return (assemble_dialogue(p1), assemble_dialogue(p2))
+
+
 def join_lines(lines):
     pl = [parse_dialogue(l) for l in lines if l]
     if not pl:
