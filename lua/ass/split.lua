@@ -54,7 +54,6 @@ end
 function split.replace()
     split._ensure_exists()
     split.get_current_split():process_line("replace_line")
-    split.cursor_down(1)
 end
 
 function split.replace_move(count)

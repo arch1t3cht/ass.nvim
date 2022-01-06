@@ -41,7 +41,7 @@ function ass.setup(opts)
             autocmd FileType ass nnoremap <buffer> <leader>ad <Cmd>AssPlayBG end<CR>
             autocmd FileType ass nnoremap <buffer> <leader>aq <Cmd>AssPlayBG before<CR>
             autocmd FileType ass nnoremap <buffer> <leader>aw <Cmd>AssPlayBG after<CR>
-            autocmd FileType ass nnoremap <buffer> <BS> <Cmd>AssReplace<CR>
+            autocmd FileType ass nnoremap <buffer> <BS> <Cmd>AssReplace<CR><Cmd>AssSplitDown<CR>
             autocmd FileType ass nnoremap <buffer> <expr> <CR> '<Cmd>AssReplaceMove' . v:count1 . '<CR>'
             autocmd FileType ass nnoremap <buffer> <expr> <Tab> '<Cmd>AssAppend' . v:count1 . '<CR>'
             autocmd FileType ass nnoremap <buffer> <expr> <M-k> '<Cmd>AssSplitUp' . v:count1 . '<CR>'

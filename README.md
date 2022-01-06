@@ -43,7 +43,7 @@ if `mappings = true` is set in the configurations, then keymaps will be created 
 |`<leader>aq`|`:AssPlayBG before`| Play the audio just before the current line |
 |`<leader>aw`|`:AssPlayBG after`| Play the audio just after the current line |
 |`<CR>`|`:AssReplaceMove`| When split editing, replace the left line by the right line and move both cursors |
-|`<BS>`|`:AssReplace`| When split editing, replace the left line by the right line and only advance the right cursor |
+|`<BS>`|`:AssReplace :AssSplitDown`| When split editing, replace the left line by the right line and only advance the right cursor |
 |`<Tab>`|`:AssAppend`| When split editing, append the left line to the right line and only advance the right cursor |
 |`<M-k>`|`:AssSplitUp`| When split editing, move the right cursor up |
 |`<M-j>`|`:AssSplitDown`| When split editing, move the right cursor down |
@@ -82,9 +82,9 @@ The following commands are defined for editing subtitles in split windows
 | Command | Description |
 | ------- | ----------- |
 |`:AssSplit <file>`| Open a new split window and read the given file |
-|`:AssReplaceMove`| Takes a count n, and replace the left n lines at the cursor by the right n line at the cursor, and move both cursors to the lines following this range. |
-|`:AssAppend`| When split editing, append the left line to the right line and only advance the right cursor |
-|`:AssReplace`| Takes a count n, and appends the right n lines at the cursor to the the line at the left cursor, and moves the right cursor to the line following this range. |
+|`:AssReplaceMove`| Takes a count n, and replace the left n lines at the cursor by the right n lines at the cursor, and move both cursors to the lines following this range. |
+|`:AssAppend`| Takes a count n, and appends the right n lines at the cursor to the left line and moves the right cursor to the line following this range. |
+|`:AssReplace`| Replaces the line at the left cursor by the line at the right cursor. |
 |`:AssSplitUp`| Move the right cursor up by the given amount of lines (default=1) |
 |`:AssSplitDown`| Move the right cursor down by the given amount of lines (default=1) |
 
