@@ -128,7 +128,7 @@ def get_play_cmd(line, opt, background):
     elif opt == "after":
         start, end = t1, t1 + timedelta(microseconds=10000 * START_LENGTH)
 
-    cmd = ["mpv",  vidfile, "--no-video"]
+    cmd = ["mpv",  vidfile, "--no-video", "--no-config", "--really-quiet"]
 
     if start:
         cmd.append("--start=" + format_td(start))
