@@ -1,8 +1,8 @@
-local ass = {}
+local ass = {
+    opts = {},
+}
 
 local util = require'ass.util'
-
-vim.cmd("py3 import ass")
 
 function ass.setup(opts)
     opts = opts or {}
@@ -69,13 +69,18 @@ function ass.setup(opts)
         opts.mpv_args_video = {"--pause"}
     end
 
-    vim.cmd(string.format("py3 ass.mpv_args_video = %s", util.python_list(opts.mpv_args_video)))
-    vim.cmd(string.format("py3 ass.mpv_args_audio = %s", util.python_list(opts.mpv_args_audio)))
+    ass.opts = opts
+end
+
+function ass.python_init()
+    vim.cmd("py3 import ass")
+    vim.cmd(string.format("py3 ass.mpv_args_video = %s", util.python_list(ass.opts.mpv_args_video)))
+    vim.cmd(string.format("py3 ass.mpv_args_audio = %s", util.python_list(ass.opts.mpv_args_audio)))
 end
 
 function ass.show()
     local line = util.escape_py(util.get_current_line(vim.api.nvim_get_current_win()))
-    local res = vim.fn.py3eval(string.format('ass.get_show_cmd("%s")', line))
+    local res = util.pyeval(string.format('ass.get_show_cmd("%s")', line))
     if res ~= nil then
         vim.cmd("w !" .. res)
     end
@@ -83,7 +88,7 @@ end
 
 function ass.play_line(opt, background)
     local line = util.escape_py(util.get_current_line(vim.api.nvim_get_current_win()))
-    local res = vim.fn.py3eval(string.format('ass.get_play_cmd("%s", "%s", %s)', line, opt, background and "True" or "False"))
+    local res = util.pyeval(string.format('ass.get_play_cmd("%s", "%s", %s)', line, opt, background and "True" or "False"))
     if res ~= nil and res ~= vim.NIL then
         vim.cmd("!" .. res)
         vim.fn.feedkeys("<CR>")     -- close the "Enter" prompt
@@ -98,7 +103,7 @@ function ass.split_line()
     local lines = vim.api.nvim_buf_get_lines(buf, c[1] - 1, c[1] + 1, false)
     if #lines < 2 then return end
 
-    local res = vim.fn.py3eval(string.format('ass.split_line("%s", "%s", %d)', util.escape_py(lines[1]), util.escape_py(lines[2]), c[2]))
+    local res = util.pyeval(string.format('ass.split_line("%s", "%s", %d)', util.escape_py(lines[1]), util.escape_py(lines[2]), c[2]))
     if res ~= nil and res ~= vim.NIL then
         vim.api.nvim_buf_set_lines(buf, c[1] - 1, c[1] + 1, false, res)
     end
@@ -114,7 +119,7 @@ function ass.join(from, to)
     local buf = vim.api.nvim_get_current_buf()
     local lines = vim.api.nvim_buf_get_lines(buf, from, to + 1, false)
 
-    local res = vim.fn.py3eval(string.format('ass.join_lines(%s)', util.python_list(lines)))
+    local res = util.pyeval(string.format('ass.join_lines(%s)', util.python_list(lines)))
     if res ~= nil and res ~= vim.NIL then
         vim.api.nvim_buf_set_lines(buf, from, to + 1, false, {res})
     end

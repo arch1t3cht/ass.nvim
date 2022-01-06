@@ -1,4 +1,23 @@
-util = {}
+util = {
+  py_loaded = false,
+}
+
+function util._py_check_loaded()
+  if not util.py_loaded then
+    require'ass'.python_init()
+  end
+  util.py_loaded = true
+end
+
+function util.py(cmd)
+  util._py_check_loaded()
+  vim.cmd("py3 " .. cmd)
+end
+
+function util.pyeval(cmd)
+  util._py_check_loaded()
+  return vim.fn.py3eval(cmd)
+end
 
 function util.escape_py(str)
     return str

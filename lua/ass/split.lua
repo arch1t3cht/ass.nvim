@@ -153,7 +153,7 @@ function SplitWin:process_line(pyfun)
     local linel = util.escape_py(util.get_current_line(self.pwindow))
     local liner = util.escape_py(util.get_current_line(self.window))
 
-    local res = vim.fn.py3eval(string.format('ass.%s("%s", "%s")', pyfun, linel, liner))
+    local res = util.pyeval(string.format('ass.%s("%s", "%s")', pyfun, linel, liner))
     if res ~= nil and res ~= vim.NIL then
         util.set_current_line(self.pwindow, res)
     end
