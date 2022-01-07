@@ -62,6 +62,7 @@ function ass.setup(opts)
             autocmd FileType ass nnoremap <buffer> <expr> J '<Cmd>AssJoin' . v:count1 . '<CR>'
             autocmd FileType ass vnoremap <buffer> J :AssJoinRange<CR>
             autocmd FileType ass nnoremap <buffer> _ 09f,l
+            autocmd FileType ass nnoremap <buffer> I 09f,a
         ]]
     end
 

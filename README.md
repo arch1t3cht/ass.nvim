@@ -41,6 +41,7 @@ If `conceal = true` is set in the configuration, then `conceallevel` and `concea
 ### Modified mappings
 if `remap = true` is set in the configuration, then when editing `ass` files, some line-based keybinds of vim will be replaced by commands more appropriate to the file format:
 - instead of jumping to the first non-whitespace character in the line, `_` will jump to the beginning of the line text
+- similarly, `I` will enter insert mode at the beginning of the line text, instead of the beginning of the buffer line
 - instead of joining entire lines, `J` will join the texts of dialogue lines, keeping the start time of the first line, and the end time of the last line. This works both in normal and visual mode.
 
 ### Defined mappings
