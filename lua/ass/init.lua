@@ -4,6 +4,22 @@ local ass = {
 
 local util = require'ass.util'
 
+function ass.get_line_dialogue(line)
+    local res = util.pyeval(string.format('ass.get_line_dialogue("%s")', util.escape_py(line)))
+    if res == vim.NIL then res = nil end
+    return res
+end
+
+function ass.set_line_dialogue(line, diag)
+    local res = util.pyeval(string.format('ass.set_line_dialogue("%s", "%s")', util.escape_py(line), util.escape_py(diag)))
+    if res == vim.NIL then res = nil end
+    return res
+end
+
+function ass.default_line_filter(line, oldline)
+    return line
+end
+
 function ass.setup(opts)
     opts = opts or {}
 
@@ -22,6 +38,8 @@ function ass.setup(opts)
         command -count=1 AssLineSplit lua require'ass'.split_line()
         command -count=1 AssJoin lua require'ass'.join_cursor(<count>)
         command -range=1 AssJoinRange lua require'ass'.join(<line1> - 1, <line2> - 1)
+        command -count=1 AssFilter lua require'ass'.filter_lines_cursor(<count>, nil)
+        command -range=1 AssFilterRange lua require'ass'.filter_lines(<line1> - 1, <line2> - 1, nil)
         command -range=1 AssShow lua require'ass'.show()
         command -nargs=1 -complete=customlist,AssPlayComp AssPlay lua require'ass'.play_line("<args>", false)
         command -nargs=1 -complete=customlist,AssPlayComp AssPlayBG lua require'ass'.play_line("<args>", true)
@@ -43,6 +61,8 @@ function ass.setup(opts)
             autocmd FileType ass nnoremap <buffer> <leader>aq <Cmd>AssPlayBG before<CR>
             autocmd FileType ass nnoremap <buffer> <leader>aw <Cmd>AssPlayBG after<CR>
             autocmd FileType ass nnoremap <buffer> <leader>ax <Cmd>AssLineSplit<CR>
+            autocmd FileType ass nnoremap <buffer> <expr> <leader>af '<Cmd>AssFilter' . v:count1 . '<CR>'
+            autocmd FileType ass vnoremap <buffer> <leader>af :AssFilterRange<CR>
             autocmd FileType ass nnoremap <buffer> <BS> <Cmd>AssReplace<CR><Cmd>AssSplitDown<CR>
             autocmd FileType ass nnoremap <buffer> <expr> <CR> '<Cmd>AssReplaceMove' . v:count1 . '<CR>'
             autocmd FileType ass nnoremap <buffer> <expr> <Tab> '<Cmd>AssAppend' . v:count1 . '<CR>'
@@ -66,6 +86,10 @@ function ass.setup(opts)
         ]]
     end
 
+    if not opts.line_hook then
+        opts.line_hook = ass.default_line_filter
+    end
+
     if opts.mpv_options_audio == nil then
         opts.mpv_options_audio = {"--no-video", "--no-config", "--really-quiet"}
     end
@@ -75,6 +99,25 @@ function ass.setup(opts)
     end
 
     ass.opts = opts
+end
+
+function ass.filter_lines_cursor(count, oldlines)
+    local c = vim.api.nvim_win_get_cursor(0)
+    ass.filter_lines(c[1] - 1, c[1] - 2 + count, oldlines)
+end
+
+function ass.filter_lines(from, to, oldlines)
+    local buf = vim.api.nvim_get_current_buf()
+    local lines = vim.api.nvim_buf_get_lines(buf, from, to + 1, false)
+
+    for k, v in ipairs(lines) do
+        if oldlines ~= nil then
+            lines[k] = ass.opts.line_hook(v, oldlines[k])
+        else
+            lines[k] = ass.opts.line_hook(v, nil)
+        end
+    end
+    vim.api.nvim_buf_set_lines(buf, from, to + 1, false, lines)
 end
 
 function ass.python_init()

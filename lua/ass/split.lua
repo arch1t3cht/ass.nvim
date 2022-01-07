@@ -5,6 +5,7 @@ local split = {
 }
 
 local util = require'ass.util'
+local ass = require'ass'
 
 -- @class SplitWin
 -- @field id
@@ -156,6 +157,7 @@ function SplitWin:process_line(pyfun)
     local res = util.pyeval(string.format('ass.%s("%s", "%s")', pyfun, linel, liner))
     if res ~= nil and res ~= vim.NIL then
         util.set_current_line(self.pwindow, res)
+        ass.filter_lines_cursor(1, {linel})
     end
 end
 

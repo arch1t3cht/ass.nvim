@@ -56,6 +56,21 @@ def assemble_dialogue(parts):
     return ",".join(parts)
 
 
+def get_line_dialogue(line):
+    p = parse_dialogue(line)
+    if not p:
+        return None
+    return p[D_TEXT]
+
+
+def set_line_dialogue(line, dialogue):
+    p = parse_dialogue(line)
+    if not p:
+        return None
+    p[D_TEXT] = dialogue
+    return assemble_dialogue(p)
+
+
 def replace_line(l1, l2):
     p1 = parse_dialogue(l1)
     p2 = parse_dialogue(l2)

@@ -30,6 +30,8 @@ The following is the full list of all configuration options, together with their
       = {"--pause"},
     mpv_options_audio     -- options passed to mpv when playing audio
       = {"--no-video", "--no-config", "--really-quiet"},
+    line_hook             -- Filter hook to be run on the results of split editing, or manually via :AssFilter
+      = function(line, oldline) return line end
 }
 ```
 
@@ -57,6 +59,7 @@ if `mappings = true` is set in the configurations, then keymaps will be created 
 |`<leader>aq`|`:AssPlayBG before`| Play the audio just before the current line |
 |`<leader>aw`|`:AssPlayBG after`| Play the audio just after the current line |
 |`<leader>ax`|`:AssLineSplit`| Split the current line at the cursor, and replace the following line with the second half |
+|`<leader>af`|`:AssFilter`| Run the defined edit hook function on the current line, or the selected range |
 |`<CR>`|`:AssReplaceMove`| When split editing, replace the left line by the right line and move both cursors |
 |`<BS>`|`:AssReplace:AssSplitDown`| When split editing, replace the left line by the right line and only advance the right cursor |
 |`<Tab>`|`:AssAppend`| When split editing, append the left line to the right line and only advance the right cursor |
@@ -71,6 +74,8 @@ After `<leader>a`, the keybinds for playing audio match the analogous keybinds f
 ### Editing lines
 The commands `:AssJoin` and `:AssJoinRange` accept a count and a range respectively, and join the described set of subtitle lines into one. They are the backend to the modified `J` command defined above - respectively in normal and in visual mode.
 
+Similarly, the commands `:AssFilter` and `:AssFilterRange` respectively accept a count and a range, and apply the defined filter function `line_hook` to the described set of lines.
+
 The command `:AssLineSplit` splits the current line at the cursor position, replacing the current line with the left half and the following line with the right half. This is useful when during split editing, two consecutive lines on the left are translated to a single joined line on the right.
 
 ### Showing or playing lines
@@ -84,6 +89,25 @@ The commands `:AssPlay <mode>` and `:AssPlayBG <mode>` play audio related to the
 This feature was the main motivation for creating this plugin. Using `:AssSplit <file>` one can open a second subtitle file in a vertical split. This is intended for repeatedly copying or appending the text of lines in the right buffer to lines in the left buffer, as happens when translating timed subtitles using possibly differently timed and split lines from another file.
 
 While the right buffer is also writeable, the intended use of split subtitle editing is for editing the left (i.e. the original) buffer. Thus, the user should usually have their cursor in the left window, unless when adjusting the cursor position in the right window.
+
+#### Editing hook
+By setting the config option `line_hook` to a user-defined lua function, a filter can be defined that will be applied every time a line on the left is modified using a line on the right. This hook can also be changed during runtime, by writing to `require'ass'.opts.line_hook`.
+
+The given function `line_hook(line, oldline)` should accept two argument - `line` being the new `.ass` line (including all `.ass` fields), and `oldline` being the line before the modification. To modify the actual dialogue text, two helper functions `ass.get_line_dialogue(line)` and `ass.set_line_dialogue(line, diag)` are provided (where `ass` is obtained by `require'ass'`). The latter function returns the modified line without modifying the input arguments. Both functions return `nil` if the line is of invalid format.
+
+This feature is intended for automatic processing of lines, like adding effects or spellchecking. The following is a simple example:
+```lua
+line_hook = function(line, oldline)
+    local ass = require'ass'
+    -- normalize some terms to American English
+    return ass.set_line_dialogue(line, ass.get_line_dialogue(line)
+        :gsub("colour", "color")
+        :gsub("Colour", "Color")
+        :gsub("flavour", "flavor")
+        :gsub("Flavour", "Flavor")
+    )
+end,
+```
 
 ### Keybinds
 
