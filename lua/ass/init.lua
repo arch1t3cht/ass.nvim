@@ -66,12 +66,12 @@ function ass.setup(opts)
         ]]
     end
 
-    if opts.mpv_args_audio == nil then
-        opts.mpv_args_audio = {"--no-video", "--no-config", "--really-quiet"}
+    if opts.mpv_options_audio == nil then
+        opts.mpv_options_audio = {"--no-video", "--no-config", "--really-quiet"}
     end
 
-    if opts.mpv_args_video == nil then
-        opts.mpv_args_video = {"--pause"}
+    if opts.mpv_options_video == nil then
+        opts.mpv_options_video = {"--pause"}
     end
 
     ass.opts = opts
@@ -79,8 +79,8 @@ end
 
 function ass.python_init()
     vim.cmd("py3 import ass")
-    vim.cmd(string.format("py3 ass.mpv_args_video = %s", util.python_list(ass.opts.mpv_args_video)))
-    vim.cmd(string.format("py3 ass.mpv_args_audio = %s", util.python_list(ass.opts.mpv_args_audio)))
+    vim.cmd(string.format("py3 ass.mpv_args_video = %s", util.python_list(ass.opts.mpv_options_video)))
+    vim.cmd(string.format("py3 ass.mpv_args_audio = %s", util.python_list(ass.opts.mpv_options_audio)))
 end
 
 function ass.show()
