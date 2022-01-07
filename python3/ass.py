@@ -173,20 +173,21 @@ def get_play_cmd(line, opt, background):
         return " ".join(cmd)
 
 
-def get_show_cmd(line):
+def show_line(line):
     vidfile = get_av("Video")
     if not vidfile:
         print("No video file")
         return
 
-    cmd = "mpv '{}' --sub-file=-".format(escape_cmd(vidfile)) + "".join(
-            " " + a for a in mpv_args_video)
+    cmd = ["mpv", vidfile, "--sub-file=-"] + mpv_args_video
+    buffer = "\r\n".join(vim.current.buffer)
 
     l = parse_dialogue(line)
     if l:
         t = format_td(parse_time(l[D_START]))
         if t:
-            cmd += f" --start={t}"
+            cmd.append(f"--start={t}")
 
-    return cmd
+    p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
+    p.communicate(input=buffer.encode())
 

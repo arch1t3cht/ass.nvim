@@ -85,10 +85,7 @@ end
 
 function ass.show()
     local line = util.escape_py(util.get_current_line(vim.api.nvim_get_current_win()))
-    local res = util.pyeval(string.format('ass.get_show_cmd("%s")', line))
-    if res ~= nil then
-        vim.cmd("w !" .. res)
-    end
+    util.py(string.format('ass.show_line("%s")', line))
 end
 
 function ass.play_line(opt, background)
