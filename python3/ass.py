@@ -80,12 +80,24 @@ def split_line(l1, l2, x):
     if not p1 or not p2:
         return None
 
-    linex = x - len(",".join(p1[:D_TEXT]))
-    t = p1[D_TEXT]
-    t1, t2 = t[:linex], t[linex:]
+    # encode and decode to make sure special characters are handled correctly
+    # vim's cursor position is in terms of bytes, not characters
+    linex = x - len(assemble_dialogue(p1[:D_TEXT] + [""]).encode())
+    t = p1[D_TEXT].encode()
 
-    p1[D_TEXT] = t1.strip()
-    p2[D_TEXT] = t2.strip()
+    # If we're in the middle of \N, also split this properly
+    if linex >= 1 and t[linex] == ord("N") and t[linex - 1] == ord("\\"):
+        linex += 1
+
+    t1, t2 = t[:linex].decode().strip(), t[linex:].decode().strip()
+    # strip trailing and leading newlines
+    while t1.endswith("\\N"):
+        t1 = t1[:-2].strip()
+    while t2.startswith("\\N"):
+        t2 = t2[2:].strip()
+
+    p1[D_TEXT] = t1
+    p2[D_TEXT] = t2
 
     return (assemble_dialogue(p1), assemble_dialogue(p2))
 
