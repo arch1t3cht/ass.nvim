@@ -1,5 +1,5 @@
 # ass.nvim
-A `neovim` plugin for editing `ass` subtitles. Main features are conceals, some basic line editing commands, playing video and audio, as well as a split editing mode allowing one to efficiently copy lines from one file to another.
+A `neovim` plugin for editing `ass` subtitles. Main features are conceals, some basic line editing commands, playing video and audio, as well as a split editing mode allowing one to efficiently copy lines from one file to another, while automatically applying filtering macros.
 
 ## Prerequisites
 `ass.nvim` requires neovim 0.5 or above, with `python3` support. For playing lines or showing video, `mpv` is required.
@@ -118,6 +118,27 @@ line_hook = function(line, oldline)
     )
 end,
 ```
+
+#### Example configuration for quickly switching between multiple hooks
+Define a list of filter functions in a new file `.config/nvim/lua/filters.lua` as follows:
+```lua
+local filters = {}
+
+function filter1(line, oldline)
+  -- first filter function
+end,
+
+function filter2(line, oldline)
+  -- second filter function
+end,
+
+return filters
+```
+Then, in `init.lua`, set `line_hook = require'filters'.filter1`, and during runtime, switch filters using `:lua require'ass'.opts.line_hook = require'filters'.filter2`. Furthermore, putting the following in `init.lua`
+```lua
+vim.cmd("command -nargs=1 AssSetFilter lua require'ass'.opts.line_hook = require'filters'.<args>")
+```
+will define a shortcut command, so that one can switch filters with `:AssSetFilter filter2`. As this is more complex and configuration dependent, it is not implemented into the plugin by default.
 
 #### Commands
 
