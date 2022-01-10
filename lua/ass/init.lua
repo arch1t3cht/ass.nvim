@@ -45,46 +45,7 @@ function ass.setup(opts)
         command -nargs=1 -complete=customlist,AssPlayComp AssPlayBG lua require'ass'.play_line("<args>", true)
     ]]
 
-    if opts.conceal == true then
-        vim.cmd[[
-            autocmd FileType ass lua require'ass'.setup_conceal()
-        ]]
-    end
-
-    if opts.mappings == true then
-        vim.cmd[[
-            autocmd FileType ass nnoremap <buffer> <leader>av <Cmd>AssShow<CR>
-            autocmd FileType ass nnoremap <buffer> <leader>as <Cmd>AssPlay line<CR>
-            autocmd FileType ass nnoremap <buffer> <leader>at <Cmd>AssPlay all<CR>
-            autocmd FileType ass nnoremap <buffer> <leader>ae <Cmd>AssPlayBG begin<CR>
-            autocmd FileType ass nnoremap <buffer> <leader>ad <Cmd>AssPlayBG end<CR>
-            autocmd FileType ass nnoremap <buffer> <leader>aq <Cmd>AssPlayBG before<CR>
-            autocmd FileType ass nnoremap <buffer> <leader>aw <Cmd>AssPlayBG after<CR>
-            autocmd FileType ass nnoremap <buffer> <leader>ax <Cmd>AssLineSplit<CR>
-            autocmd FileType ass nnoremap <buffer> <expr> <leader>af '<Cmd>AssFilter' . v:count1 . '<CR>'
-            autocmd FileType ass vnoremap <buffer> <leader>af :AssFilterRange<CR>
-            autocmd FileType ass nnoremap <buffer> <BS> <Cmd>AssReplace<CR><Cmd>AssSplitDown<CR>
-            autocmd FileType ass nnoremap <buffer> <expr> <CR> '<Cmd>AssReplaceMove' . v:count1 . '<CR>'
-            autocmd FileType ass nnoremap <buffer> <expr> <Tab> '<Cmd>AssAppend' . v:count1 . '<CR>'
-            autocmd FileType ass nnoremap <buffer> <expr> <M-k> '<Cmd>AssSplitUp' . v:count1 . '<CR>'
-            autocmd FileType ass nnoremap <buffer> <expr> <M-j> '<Cmd>AssSplitDown' . v:count1 . '<CR>'
-            autocmd FileType ass nnoremap <buffer> <expr> <C-k> 'k<Cmd>AssSplitDown' . v:count1 . '<CR>'
-            autocmd FileType ass nnoremap <buffer> <expr> <C-j> 'j<Cmd>AssSplitUp' . v:count1 . '<CR>'
-            autocmd FileType ass nnoremap <buffer> <expr> <M-e> '<C-w>l' . v:count1 . '<C-e><C-w>h'
-            autocmd FileType ass nnoremap <buffer> <expr> <M-y> '<C-w>l' . v:count1 . '<C-y><C-w>h'
-            autocmd FileType ass nnoremap <buffer> <M-d> <C-w>l<C-d><C-w>h
-            autocmd FileType ass nnoremap <buffer> <M-i> <C-w>l<C-u><C-w>h
-        ]]
-    end
-
-    if opts.remap == true then
-        vim.cmd[[
-            autocmd FileType ass nnoremap <buffer> <expr> J '<Cmd>AssJoin' . v:count1 . '<CR>'
-            autocmd FileType ass vnoremap <buffer> J :AssJoinRange<CR>
-            autocmd FileType ass nnoremap <buffer> _ 09f,l
-            autocmd FileType ass nnoremap <buffer> I 09f,a
-        ]]
-    end
+    vim.cmd("autocmd FileType ass lua require'ass'.setup_buffer()")
 
     if not opts.line_hook then
         opts.line_hook = ass.default_line_filter
@@ -99,6 +60,48 @@ function ass.setup(opts)
     end
 
     ass.opts = opts
+end
+
+function ass.setup_buffer()
+    local opts = ass.opts
+    if opts.conceal == true then
+        ass.setup_conceal()
+    end
+
+    if opts.mappings == true then
+        vim.cmd[[
+            nnoremap <buffer> <leader>av <Cmd>AssShow<CR>
+            nnoremap <buffer> <leader>as <Cmd>AssPlay line<CR>
+            nnoremap <buffer> <leader>at <Cmd>AssPlay all<CR>
+            nnoremap <buffer> <leader>ae <Cmd>AssPlayBG begin<CR>
+            nnoremap <buffer> <leader>ad <Cmd>AssPlayBG end<CR>
+            nnoremap <buffer> <leader>aq <Cmd>AssPlayBG before<CR>
+            nnoremap <buffer> <leader>aw <Cmd>AssPlayBG after<CR>
+            nnoremap <buffer> <leader>ax <Cmd>AssLineSplit<CR>
+            nnoremap <buffer> <expr> <leader>af '<Cmd>AssFilter' . v:count1 . '<CR>'
+            vnoremap <buffer> <leader>af :AssFilterRange<CR>
+            nnoremap <buffer> <BS> <Cmd>AssReplace<CR><Cmd>AssSplitDown<CR>
+            nnoremap <buffer> <expr> <CR> '<Cmd>AssReplaceMove' . v:count1 . '<CR>'
+            nnoremap <buffer> <expr> <Tab> '<Cmd>AssAppend' . v:count1 . '<CR>'
+            nnoremap <buffer> <expr> <M-k> '<Cmd>AssSplitUp' . v:count1 . '<CR>'
+            nnoremap <buffer> <expr> <M-j> '<Cmd>AssSplitDown' . v:count1 . '<CR>'
+            nnoremap <buffer> <expr> <C-k> 'k<Cmd>AssSplitDown' . v:count1 . '<CR>'
+            nnoremap <buffer> <expr> <C-j> 'j<Cmd>AssSplitUp' . v:count1 . '<CR>'
+            nnoremap <buffer> <expr> <M-e> '<C-w>l' . v:count1 . '<C-e><C-w>h'
+            nnoremap <buffer> <expr> <M-y> '<C-w>l' . v:count1 . '<C-y><C-w>h'
+            nnoremap <buffer> <M-d> <C-w>l<C-d><C-w>h
+            nnoremap <buffer> <M-i> <C-w>l<C-u><C-w>h
+        ]]
+    end
+
+    if opts.remap == true then
+        vim.cmd[[
+            nnoremap <buffer> <expr> J '<Cmd>AssJoin' . v:count1 . '<CR>'
+            vnoremap <buffer> J :AssJoinRange<CR>
+            nnoremap <buffer> _ 09f,l
+            nnoremap <buffer> I 09f,a
+        ]]
+    end
 end
 
 function ass.filter_lines_cursor(count, oldlines)
