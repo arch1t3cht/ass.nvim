@@ -7,7 +7,7 @@ A `neovim` plugin for editing `ass` subtitles. Main features are conceals, some 
 ## Installation
 Install with your favourite plugin manager, e.g. vim-plug:
 ```vim
-Plug 'arch1t3cht/ass.nvim`
+Plug 'arch1t3cht/ass.nvim'
 ```
 Then initialize the plugin as described below in configuration.
 
