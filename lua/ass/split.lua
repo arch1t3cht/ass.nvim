@@ -151,12 +151,12 @@ end
 function SplitWin:process_line(pyfun)
     if not (self.is_open and vim.api.nvim_get_current_win() == self.parent_window) then return end
 
-    local linel = util.escape_py(util.get_current_line(self.pwindow))
+    local linel = util.escape_py(util.get_current_line(self.parent_window))
     local liner = util.escape_py(util.get_current_line(self.window))
 
     local res = util.pyeval(string.format('ass.%s("%s", "%s")', pyfun, linel, liner))
     if res ~= nil and res ~= vim.NIL then
-        util.set_current_line(self.pwindow, res)
+        util.set_current_line(self.parent_window, res)
         ass.filter_lines_cursor(1, {linel})
     end
 end
