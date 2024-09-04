@@ -56,7 +56,11 @@ function util.move_cursor(win, dy)
     if newy < 1 then newy = 1 end
     if newy > buf_height then newy = buf_height end
     vim.api.nvim_win_set_cursor(win, {newy, c[2]})
-    vim.api.nvim__buf_redraw_range(buf, 0, buf_height)
+    if vim.api.nvim__buf_redraw_range then
+        vim.api.nvim__buf_redraw_range(buf, 0, buf_height)
+    else
+        vim.api.nvim__redraw({buf=buf, range={0, buf_height}})
+    end
 end
 
 return util
